@@ -4,6 +4,8 @@ const axios = require('axios');
 const { YoutubeTranscript } = require('youtube-transcript');
 const FormData = require('form-data');
 const fs = require('fs');
+const path = require('path');
+const os = require('os');
 require('dotenv').config();
 
 const app = express();
@@ -11,6 +13,9 @@ const port = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from the React build directory
+app.use(express.static(path.join(__dirname, 'build')));
 
 function cleanTranscript(transcript) {
   if (Array.isArray(transcript)) {
@@ -36,7 +41,7 @@ function cleanTranscript(transcript) {
 
 async function downloadYouTubeAudio(videoId) {
   const ytdl = require('ytdl-core');
-  const outputPath = `./${videoId}.mp3`;
+  const outputPath = path.join(os.tmpdir(), `${videoId}.mp3`);
   
   return new Promise((resolve, reject) => {
     ytdl(`https://www.youtube.com/watch?v=${videoId}`, {
@@ -194,6 +199,11 @@ ${transcript}`;
     console.error('Error generating notes:', error);
     res.status(500).json({ error: 'Failed to generate notes', details: error.message });
   }
+});
+
+// Serve React app for all other routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 app.listen(port, () => {
