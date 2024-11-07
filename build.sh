@@ -1,16 +1,11 @@
-#!/usr/bin/env bash
-# exit on error
-set -o errexit
+#!/bin/bash
 
-# Install dependencies
+# Install server dependencies
+echo "Installing server dependencies..."
 npm install
-npm install --only=dev
 
-# Set environment to production
-export NODE_ENV=production
+# Install client dependencies and build
+echo "Installing client dependencies and building..."
+cd client && npm install && npm run build && cd ..
 
-# Build the React app with CI=false to prevent treating warnings as errors
-CI=false npm run build
-
-# Make sure the server can serve the static files
-chmod -R 755 build/
+echo "Build completed successfully!"

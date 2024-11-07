@@ -1,63 +1,30 @@
 {
-  "name": "vidnote-genius",
+  "name": "vidnote-genius-server",
   "version": "0.1.0",
   "private": true,
   "engines": {
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@headlessui/react": "^2.2.0",
-    "@tailwindcss/aspect-ratio": "^0.4.2",
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^13.0.0",
-    "@testing-library/user-event": "^13.2.1",
-    "autoprefixer": "^10.4.14",
-    "axios": "^1.6.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.18.3",
-    "firebase": "^11.0.1",
     "form-data": "^4.0.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "web-vitals": "^2.1.0",
     "youtube-captions-scraper": "^2.0.3",
     "youtube-dl-exec": "^2.5.7",
     "youtube-transcript": "^1.2.1",
-    "ytdl-core": "^4.11.5"
+    "ytdl-core": "^4.11.5",
+    "axios": "^1.6.7"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2",
-    "postcss": "^8.4.23",
-    "react-scripts": "5.0.1",
-    "tailwindcss": "^3.3.2"
+    "concurrently": "^8.2.2"
   },
   "scripts": {
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "node server.js",
-    "client": "react-scripts start",
-    "build": "CI=false react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
     "start": "node server.js",
-    "heroku-postbuild": "npm install && npm run build"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "server": "node server.js",
+    "client": "cd client && npm start",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "cd client && npm install && npm run build",
+    "install-all": "npm install && cd client && npm install"
   }
 }
