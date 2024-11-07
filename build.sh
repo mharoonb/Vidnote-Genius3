@@ -1,11 +1,20 @@
 #!/bin/bash
 
-# Install server dependencies
+# Exit on error
+set -e
+
+# Echo commands before executing
+set -x
+
+# Clean install of dependencies
 echo "Installing server dependencies..."
-npm install
+npm ci || npm install
 
 # Install client dependencies and build
 echo "Installing client dependencies and building..."
-cd client && npm install && npm run build && cd ..
+cd client
+npm ci || npm install
+npm run build
+cd ..
 
 echo "Build completed successfully!"
