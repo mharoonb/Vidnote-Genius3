@@ -11,7 +11,11 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-app.use(cors());
+// Enable CORS only in development
+if (process.env.NODE_ENV !== 'production') {
+  app.use(cors());
+}
+
 app.use(express.json());
 
 // Serve static files from the React build directory
@@ -63,7 +67,7 @@ async function transcribeWithWhisper(audioPath) {
     const response = await axios.post('https://api.openai.com/v1/audio/transcriptions', formData, {
       headers: {
         ...formData.getHeaders(),
-        'Authorization': `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
       },
     });
 
@@ -76,6 +80,7 @@ async function transcribeWithWhisper(audioPath) {
   }
 }
 
+// API Routes
 app.get('/api/youtube-transcript', async (req, res) => {
   try {
     const { videoId } = req.query;
@@ -122,7 +127,7 @@ app.post('/api/translate', async (req, res) => {
       ]
     }, {
       headers: {
-        'Authorization': `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
         'Content-Type': 'application/json'
       }
     });
@@ -144,7 +149,7 @@ app.post('/api/is-english', async (req, res) => {
       ]
     }, {
       headers: {
-        'Authorization': `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
         'Content-Type': 'application/json'
       }
     });
@@ -159,11 +164,11 @@ app.post('/api/is-english', async (req, res) => {
 app.post('/api/generate-notes', async (req, res) => {
   try {
     const { transcript } = req.body;
-    const API_KEY = process.env.REACT_APP_ANTHROPIC_API_KEY;
+    const API_KEY = process.env.ANTHROPIC_API_KEY;
     const API_URL = 'https://api.anthropic.com/v1/messages';
 
     if (!API_KEY) {
-      throw new Error('REACT_APP_ANTHROPIC_API_KEY is not set in the environment variables');
+      throw new Error('ANTHROPIC_API_KEY is not set in the environment variables');
     }
 
     const prompt = `Analyze the provided transcript in detail, read each line and understand the context. then Convert the provided transcription into extensively detailed, well-structured notes that capture and explain all information presented in the transcript. Maintain the full depth and breadth of the original content without summarizing or condensing. You should be carefull about the type of transcript and then give structured notes, for example if the transcript is a story then obviously you will not give it headings and sub heading you would structure the notes where you will explain the story in relevant format, if the notes are for example lecture about a scientific concept then you will structure it in a way a scientific lecture should be structured, etc.'
@@ -201,7 +206,7 @@ ${transcript}`;
   }
 });
 
-// Serve React app for all other routes
+// Important: This route should be after all API routes
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
